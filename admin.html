@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin | BarberShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="page-dark">
+
+    <nav class="navbar admin-nav">
+        <div class="logo">Barber<span>Shop.</span></div>
+        <div class="nav-links">
+            <a href="admin-master.html">Kelola Data</a>
+            <a href="index.html" target="_blank">Lihat Web</a>
+            <button id="logoutBtn" class="btn-outline btn-danger">Logout</button>
+        </div>
+    </nav>
+
+    <main class="dashboard-section" id="adminContent" style="display: none;">
+        <div class="container">
+            <div class="dashboard-header">
+                <h1>Admin Dashboard</h1>
+                <p>Kelola semua pesanan masuk.</p>
+            </div>
+
+            <div class="table-responsive">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Pelanggan</th>
+                            <th>Layanan & Style</th>
+                            <th>Barber</th>
+                            <th>Jadwal</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bookingsTableBody">
+                        <tr>
+                            <td colspan="6" style="text-align: center;">Memuat data pesanan...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/supabase.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>

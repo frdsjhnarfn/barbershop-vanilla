@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Master Data | BarberShop</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,600;1,400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body class="page-dark">
+
+    <nav class="navbar admin-nav">
+        <div class="logo">Barber<span>Shop.</span></div>
+        <div class="nav-links">
+            <a href="admin.html">← Kembali ke Dashboard</a>
+        </div>
+    </nav>
+
+    <main class="dashboard-section" id="adminContent" style="display: none;">
+        <div class="container">
+            <div class="dashboard-header" style="text-align: left; margin-bottom: 3rem;">
+                <h1>Master Data</h1>
+                <p>Kelola daftar layanan dan barber Anda.</p>
+            </div>
+
+            <div class="form-row">
+                <div class="master-card">
+                    <h2>Services</h2>
+                    <form id="formService" class="editorial-form" style="gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="form-group">
+                            <input type="text" id="sName" required placeholder="Nama Layanan">
+                        </div>
+                        <div class="form-row" style="gap: 1rem;">
+                            <div class="form-group">
+                                <input type="number" id="sPrice" required placeholder="Harga (Rp)">
+                            </div>
+                            <div class="form-group">
+                                <input type="number" id="sDuration" required placeholder="Durasi (mnt)">
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-submit" style="padding: 1rem;">Tambah Layanan</button>
+                    </form>
+                    <div id="serviceList" class="data-list">
+                        <!-- List Layanan -->
+                    </div>
+                </div>
+
+                <div class="master-card">
+                    <h2>Barbers</h2>
+                    <form id="formBarber" class="editorial-form" style="gap: 1.5rem; margin-bottom: 2rem;">
+                        <div class="form-group">
+                            <input type="text" id="bName" required placeholder="Nama Barber">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="bSpecialty" required placeholder="Spesialisasi (Fades, dll)">
+                        </div>
+                        <button type="submit" class="btn-submit" style="padding: 1rem;">Tambah Barber</button>
+                    </form>
+                    <div id="barberList" class="data-list">
+                        <!-- List Barber -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/supabase.js"></script>
+    <script src="js/admin-master.js"></script>
+</body>
+</html>
