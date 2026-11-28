@@ -355,18 +355,17 @@ body.page-light {
 /* --- HAIR STYLE GRID (Kartu Pilihan Foto) --- */
 .hair-style-grid {
     display: grid;
-    /* Membuat kolom responsif, minimal lebar 140px */
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); /* Lebar minimal 160px */
     gap: 1.5rem;
     margin-top: 1rem;
-    width: 100%; /* Memastikan grid tidak melebar keluar */
+    width: 100%;
 }
 
 .style-card {
     background: #1a1a1a;
     border: 2px solid transparent;
     border-radius: 8px;
-    overflow: hidden; /* PENTING: Memotong gambar yang keluar dari kotak */
+    overflow: hidden;
     cursor: pointer;
     transition: all 0.3s ease;
     text-align: center;
@@ -375,19 +374,21 @@ body.page-light {
     flex-direction: column;
 }
 
-/* KUNCI UTAMA: Membatasi Ukuran Gambar */
+/* KUNCI PERBAIKAN ADA DI SINI */
 .style-card img {
     width: 100%;
-    height: 200px; /* Tinggi gambar dipaksa 200px */
-    object-fit: cover; /* PENTING: Gambar akan di-crop otomatis agar tidak gepeng */
+    height: auto;        /* Biarkan tinggi menyesuaikan lebar agar rasio 1:1 terjaga */
+    aspect-ratio: 1 / 1; /* Memaksa kotak gambar menjadi persegi sempurna */
+    object-fit: cover;   /* Memastikan gambar mengisi kotak tanpa gepeng */
     display: block;
     transition: transform 0.3s ease;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .style-card span {
     display: block;
     padding: 1rem 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     font-weight: 600;
     color: #aaa;
     transition: color 0.3s ease;
@@ -395,11 +396,11 @@ body.page-light {
 
 /* Efek Hover */
 .style-card:hover {
-    border-color: rgba(196, 164, 132, 0.5);
+    border-color: rgba(196, 164, 132, 0.8);
     transform: translateY(-5px);
 }
 .style-card:hover img {
-    transform: scale(1.05); /* Efek zoom saat disentuh mouse */
+    transform: scale(1.05);
 }
 
 /* Efek Saat Dipilih */
