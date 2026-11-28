@@ -1,13 +1,14 @@
 document.addEventListener("DOMContentLoaded", async () => {
+    // Elemen DOM
     const serviceSelect = document.getElementById("service_id");
     const barberSelect = document.getElementById("barber_id");
     const hairStyleRow = document.getElementById("hairStyleRow");
-    const hairStyleInput = document.getElementById("hair_style"); // Input hidden
-    const styleCards = document.querySelectorAll(".style-card");
+    const hairStyleInput = document.getElementById("hair_style");
+    const styleCards = document.querySelectorAll(".style-card-vploss");
     const bookingForm = document.getElementById("bookingForm");
     const submitBtn = document.getElementById("submitBtn");
     
-    // Set tanggal minimal hari ini (Tidak bisa memesan tanggal lampau)
+    // Set tanggal minimal hari ini
     const today = new Date().toISOString().split("T")[0];
     document.getElementById("booking_date").min = today;
 
@@ -39,41 +40,84 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // ==========================================
-    // 2. Deteksi Layanan "Cut" & Logika Kartu Hair Style
+    // 2. Animasi VPLOSS-Style (Anime.js & Motion)
+    // ==========================================
+    
+    // Animasi Judul (Anime.js - Stagger Huruf)
+    if (window.anime) {
+        const title = document.getElementById('mainTitle');
+        if (title) {
+            const text = title.innerText;
+            title.innerHTML = text.split('').map(char => 
+                char === ' ' ? '<span style="display:inline-block; width: 0.3em;"> </span>' : `<span style="display:inline-block;">${char}</span>`
+            ).join('');
+
+            anime({
+                targets: '#mainTitle span',
+                translateY: [100, 0],
+                opacity: [0, 1],
+                easing: 'easeOutExpo',
+                duration: 1200,
+                delay: anime.stagger(50)
+            });
+        }
+    }
+
+    // ==========================================
+    // 3. Logika Deteksi Layanan "Cut"
     // ==========================================
     serviceSelect.addEventListener("change", (e) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         const serviceName = selectedOption.getAttribute("data-name").toLowerCase();
         
         if (serviceName.includes("cut")) {
-            hairStyleRow.style.display = "grid";
+            hairStyleRow.style.display = "block";
             hairStyleInput.required = true;
+            
+            // Animasi munculnya grid menggunakan Motion
+            if (window.Motion) {
+                Motion.animate(
+                    '.style-card-vploss',
+                    { opacity: [0, 1], y: [30, 0] },
+                    { duration: 0.6, delay: Motion.stagger(0.1) }
+                );
+            }
         } else {
             hairStyleRow.style.display = "none";
             hairStyleInput.required = false;
-            hairStyleInput.value = ""; // Reset input
+            hairStyleInput.value = ""; 
             
-            // Hapus efek terpilih dari semua kartu
+            // Reset pilihan visual
             styleCards.forEach(c => c.classList.remove("selected"));
         }
     });
 
-    // Klik pada Kartu Visual
+    // ==========================================
+    // 4. Logika Klik Kartu Hair Style
+    // ==========================================
     styleCards.forEach(card => {
         card.addEventListener("click", () => {
+            // Hapus seleksi sebelumnya
             styleCards.forEach(c => c.classList.remove("selected"));
+            
+            // Tandai yang baru dipilih
             card.classList.add("selected");
             hairStyleInput.value = card.getAttribute("data-value");
+
+            // Animasi "pop" kecil saat diklik menggunakan Motion
+            if (window.Motion) {
+                Motion.animate(card, { scale: [0.95, 1] }, { duration: 0.2 });
+            }
         });
     });
 
     // ==========================================
-    // 3. Submit Form dengan Validasi & Keamanan
+    // 5. Submit Form dengan Validasi & Keamanan
     // ==========================================
     bookingForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         
-        // Validasi 1: Pastikan jika layanan Cut, gaya rambut wajib dipilih
+        // Validasi 1: Jika layanan Cut, wajib pilih gaya rambut
         if (hairStyleRow.style.display !== "none" && !hairStyleInput.value) {
             alert("Silakan pilih gaya rambut terlebih dahulu.");
             return;
@@ -83,29 +127,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         const name = document.getElementById("customer_name").value.trim();
         const phone = document.getElementById("customer_phone").value.trim();
         
-        // Validasi 3: Pastikan nama minimal 3 karakter
         if (name.length < 3) {
             alert("Nama lengkap minimal 3 karakter.");
             return;
         }
 
-        // Validasi 4: Format nomor HP (Hanya angka, panjang 10-14 digit)
+        // Validasi 3: Format nomor HP
         const phoneRegex = /^[0-9]{10,14}$/;
         if (!phoneRegex.test(phone)) {
-            alert("Nomor HP tidak valid! Gunakan 10-14 digit angka (Contoh: 081234567890).");
+            alert("Nomor HP tidak valid! Gunakan 10-14 digit angka.");
             return;
         }
 
-        // Validasi 5: Sanitasi Input untuk mencegah XSS (Script Injection)
-        // Mengubah karakter < dan > menjadi teks biasa agar tidak dieksekusi oleh browser
+        // Sanitasi XSS
         const sanitizedName = name.replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-        // ==========================================
-        // 4. Proses Kirim ke Supabase
-        // ==========================================
+        // Proses Kirim
         const originalText = submitBtn.innerText;
-        submitBtn.innerText = "Memproses...";
-        submitBtn.disabled = true; // Mencegah double-click (Spam)
+        submitBtn.innerText = "PROCESSING...";
+        submitBtn.disabled = true; // Mencegah double-click
 
         const formData = {
             customer_name: sanitizedName,
@@ -121,20 +161,16 @@ document.addEventListener("DOMContentLoaded", async () => {
         const { error } = await supabaseClient.from("bookings").insert([formData]);
 
         if (error) {
-            // Tangani error bentrok jadwal (Unique Constraint dari database)
             if (error.code === "23505") {
-                alert("Maaf, jadwal barber ini sudah penuh di tanggal dan jam tersebut. Silakan pilih waktu atau barber lain.");
+                alert("Maaf, jadwal barber ini sudah penuh di tanggal dan jam tersebut.");
             } else {
                 alert("Terjadi kesalahan sistem: " + error.message);
             }
-            
-            // Nyalakan kembali tombol jika gagal
             submitBtn.innerText = originalText;
             submitBtn.disabled = false;
         } else {
-            // Jika berhasil
-            alert("Pesanan Berhasil! Terima kasih telah memilih layanan kami.");
-            window.location.href = "index.html"; // Redirect ke beranda
+            alert("Pesanan Berhasil! Terima kasih.");
+            window.location.href = "index.html"; 
         }
     });
 });
